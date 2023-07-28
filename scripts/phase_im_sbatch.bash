@@ -13,4 +13,4 @@
 module purge
 module add r-4.2.2-gcc-11.2.0
 
-make results/params/02_MusRat
+make results/params/$1
