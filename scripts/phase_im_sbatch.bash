@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #SBATCH -N 1            # number of nodes
-#SBATCH -c 1            # number of cores 
+#SBATCH -c 2            # number of cores
+#SBATCH --mem=0
 #SBATCH -t 2-00:00:00   # time in d-hh:mm:ss
 #SBATCH -p general      # partition 
 #SBATCH -q public       # QOS
