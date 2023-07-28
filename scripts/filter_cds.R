@@ -35,6 +35,15 @@ for(filename in fasta_files) {
     if(any(nchar(dna) > 9000L)) {
         next
     }
+    # skip any pairs that have internal stop codons
+    b <- dna |> strsplit(character(0L)) |> map_lgl(function(x) {
+        s <- seq(1, length(x), 3)
+
+        any(paste0(x[s], x[s+1], x[s+2]) %in% c("TAA", "TAG", "TGA"))
+    })
+    if(any(b)) {
+        next
+    }
     
     # sort sequences randomly based on entropy of the dna sequences
     h <- rlang::hash(sort(dna))
@@ -46,3 +55,5 @@ for(filename in fasta_files) {
     fasta <- fs::path(output_dir, basename, ext = "fasta")
     write.fasta(dna, names(dna), file.out=fasta)
 }
+
+
