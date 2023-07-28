@@ -772,7 +772,10 @@ library(cli)
 
 if(!is_interactive()) {
     args <- commandArgs(trailingOnly = TRUE)
-    phase_im_main(args[1], args[2], args[3])
+    docs <- phase_im_main(args[1], args[2], args[3])
+    if(!docs[[length(docs)]]$converged) {
+        quit(save = "no", status = 10)
+    }
 }
 
 # Importance Sampling reference
