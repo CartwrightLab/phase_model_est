@@ -40,7 +40,7 @@ phase_im_main <- function(fasta_directory, results_directory, bin_path) {
 
     # find the input files and sort based on basename
     fasta_files <- fs::dir_ls(fs::path_abs(fasta_directory), glob="*.fasta")
-    fasta_files <- fasta_files[1000 + (1:100)]
+    #fasta_files <- fasta_files[1000 + (1:100)]
 
 
     basenames <- fs::path_file(fasta_files)
