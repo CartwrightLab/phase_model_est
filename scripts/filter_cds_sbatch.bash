@@ -11,7 +11,9 @@
 #SBATCH --mail-type=ALL # Send an e-mail when a job starts, stops, or fails
 #SBATCH --export=NONE   # Purge the job-submitting shell environment
 
-module purge
-module add r-4.2.2-gcc-11.2.0
+if type -P module &> /dev/null; then
+	module purge
+	module add r-4.2.2-gcc-11.2.0
+fi
 
-make results/params/$1
+make -C data/filtered_cds $1

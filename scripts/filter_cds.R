@@ -14,7 +14,7 @@ fasta_files <- list_c(fasta_files)
 
 fs::dir_create(output_dir)
 
-for(filename in fasta_files) {
+fasta_files |> walk(.progress = TRUE, function(filename) {
     dna <- read.fasta(filename, as.string=TRUE)
     # convert to upper case and strip gaps and terminal stop codons
     dna <- dna |> map_chr(function(x) {
@@ -54,6 +54,6 @@ for(filename in fasta_files) {
     basename <- fs::path_file(filename) |> fs::path_ext_remove()
     fasta <- fs::path(output_dir, basename, ext = "fasta")
     write.fasta(dna, names(dna), file.out=fasta)
-}
+})
 
 
