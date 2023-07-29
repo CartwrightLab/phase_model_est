@@ -2,7 +2,8 @@
 # coding sequence evolution.
 
 BURNIN_STEPS <- 3L  # execute at least this many steps
-MAX_STEPS <- 20L    # terminate if this step is reached
+MAX_SAMPLE_STEPS <- 10L # maximum number of steps to sample
+MAX_STEPS <- 50L    # terminate if this step is reached
 SAMPLES_PER_PAIR <- 100L # coati sample size
 
 #### MAIN FUNCTION ###
@@ -63,7 +64,7 @@ phase_im_main <- function(fasta_directory, results_directory, bin_path) {
         step = 0, time = now("UTC"), pid = Sys.getpid(),
         resample = resample, converged = converged)
 
-    jsonlite::write_json(document[[1]], path = output_file(0L),
+    jsonlite::write_json(document[1], path = output_file(0L),
         digits = NA )
 
     repeat {
@@ -162,7 +163,7 @@ phase_im_main <- function(fasta_directory, results_directory, bin_path) {
             old_params <- list_c(prev_params)
             delta <- abs(2*(new_params - old_params) / (new_params + old_params))
             if(resample == TRUE) {
-                if(max(delta[1:12]) < 0.01) {
+                if(max(delta[1:12]) < 0.01 || step >= MAX_SAMPLE_STEPS) {
                     resample <- FALSE
                     # save the frozen sample for later processing
                     saveRDS(tab_results, file =
