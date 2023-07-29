@@ -25,15 +25,15 @@ fasta_files |> walk(.progress = TRUE, function(filename) {
     })
     # skip any pairs that contain "N"
     if(any(str_detect(dna, "[^ACGT]"))) {
-        next
+        return()
     }
     # skip any pairs that are not multiples of 3
     if(any((nchar(dna) %% 3) != 0)) {
-        next
+        return()
     }
     # skip any pairs that are too long
     if(any(nchar(dna) > 9000L)) {
-        next
+        return()
     }
     # skip any pairs that have internal stop codons
     b <- dna |> strsplit(character(0L)) |> map_lgl(function(x) {
@@ -42,7 +42,7 @@ fasta_files |> walk(.progress = TRUE, function(filename) {
         any(paste0(x[s], x[s+1], x[s+2]) %in% c("TAA", "TAG", "TGA"))
     })
     if(any(b)) {
-        next
+        return()
     }
     
     # sort sequences randomly based on entropy of the dna sequences
