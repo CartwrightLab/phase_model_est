@@ -68,6 +68,8 @@ phase_im_main <- function(fasta_directory, results_directory, bin_path) {
         digits = NA )
 
     repeat {
+        zz_results <- NULL
+
         step <- step + 1
         cli_h1("Step {step}")
 
@@ -92,6 +94,10 @@ phase_im_main <- function(fasta_directory, results_directory, bin_path) {
                 format_failed = "{.alert-danger Sampling alignments {.timestamp {cli::pb_elapsed}}}"
             )
 
+            # Force garbage collection before utilizing a lot of memory
+            results <- NULL
+            gc()
+            # Recalculate results
             results <- map(fasta_files, function(filename) {
                 my_args <- coati_args
                 my_seed <- runif(1L, min = 1, max = 2147483647)
@@ -110,11 +116,14 @@ phase_im_main <- function(fasta_directory, results_directory, bin_path) {
                 ret
             }, .progress = progress)
 
-            tab_results <- list_rbind(results, names_to = "file")
+            results <- list_rbind(results, names_to = "file")
         }
         
         cli_progress_step("Calculating weights")
-        zz_results <- mutate(tab_results,
+        # Force garbage collection before using a lot of memory
+        zz_results <- NULL
+        gc()
+        zz_results <- mutate(results,
                 zz_score_m = zz_score_codons(codons, params, uni_code61),
                 zz_score_g = zz_score_gaps(aln, params) ) |>
             mutate( weight = norm_weight(log(n) + 
@@ -166,8 +175,8 @@ phase_im_main <- function(fasta_directory, results_directory, bin_path) {
                 if(max(delta[1:12]) < 0.01 || step >= MAX_SAMPLE_STEPS) {
                     resample <- FALSE
                     # save the frozen sample for later processing
-                    saveRDS(tab_results, file =
-                        output_file("tab_results", ext = "rds"))
+                    saveRDS(results, file =
+                        output_file("samples", ext = "rds"))
                 }
             } else {
                 if(max(delta) < 0.0001) {
