@@ -68,8 +68,6 @@ phase_im_main <- function(fasta_directory, results_directory, bin_path) {
         digits = NA )
 
     repeat {
-        zz_results <- NULL
-
         step <- step + 1
         cli_h1("Step {step}")
 
@@ -95,6 +93,7 @@ phase_im_main <- function(fasta_directory, results_directory, bin_path) {
             )
 
             # Force garbage collection before utilizing a lot of memory
+            zz_results <- NULL
             results <- NULL
             gc()
             # Recalculate results
