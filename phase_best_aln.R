@@ -26,23 +26,27 @@ best_aln_main <- function(samples_file, params_file) {
     uni_code61 <- universal_genetic_code(remove_stops = TRUE)
 
     # codon - codon substitution table (includes N)
+    mat94 <- mg94(params, uni_code61)
     w94 <- amb_mg94(params, uni_code61)
 
     # gap matrix
     wgap <- zz_gap_matrix(params)
 
-
     # During the sampling process, gap codons were filled in with nucleotides.
     # We will need to reverse this process.
     cli_progress_step("Generating sequences")
     as_seq <- function(file, aln, codons, score, n) {
-        a <- aln_to_arrays(codons, aln, w94)
+        a <- aln_to_arrays(codons, aln, mat94)
 
         # flatten here for better memory consumption (I think. ?)
         tibble(file = file, ancestor = str_flatten(a$ancestor),
             descendant = str_flatten(a$descendant))
     }
     seqs <- pmap(alignments, as_seq)
+
+    # Flush memory
+    alignments <- NULL
+    gc()
 
     # unique alignments
     seqs <- list_rbind(seqs) |> distinct()
@@ -55,10 +59,12 @@ best_aln_main <- function(samples_file, params_file) {
     seqs <- seqs |> mutate(weight = map2_dbl(ancestor, descendant, do_score),
         file = fs::path_file(file))
 
+    # Flush memory
+    gc()
+
     cli_progress_step("Finding best alignments")
     best_aln <- seqs |> slice_max(weight, by = file, with_ties = FALSE)
     best_aln <- transpose(best_aln)
-
 
     # Write aligned sequences to output files
     cli_progress_step("Writing output fastas")
@@ -74,7 +80,6 @@ best_aln_main <- function(samples_file, params_file) {
 }
 
 ## ZZ MODEL ####################################################################
-
 
 zz_score <- function(ancestor, descendant, sub_mat, gap_mat) {
     # log-transform substitution matrix
