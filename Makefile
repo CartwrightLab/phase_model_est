@@ -1,8 +1,8 @@
+default: all
+
 include datasets.mk
 
 BIN_PATH=~/Projects/coati/build/release/src/coati-sample
-
-default: all
 
 all:
 
