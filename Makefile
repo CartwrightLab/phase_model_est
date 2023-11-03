@@ -27,8 +27,15 @@ results/params/%.samples.rds: results/params/%.final.json
 
 final_rds: $(addprefix results/params/,$(addsuffix .samples.rds,$(DATASETS)))
 
+.PHONY: final_rds
+
 results/best_aln/%/.script_done: results/params/%.final.json results/params/%.samples.rds
 	Rscript --vanilla phase_best_aln.R results/params/$*.samples.rds results/params/$*.final.json
 	touch $@
 
-.PHONY: final_rds
+results/best_aln_sum/%.csv: results/best_aln/%/.script_done
+	(cd results/best_aln && Rscript --vanilla ../../scripts/summarize_aln.R $*) > $@
+
+best_aln_sum: $(addprefix results/best_aln_sum/,$(addsuffix .csv,$(DATASETS)))
+
+.PHONY: best_aln_sum
