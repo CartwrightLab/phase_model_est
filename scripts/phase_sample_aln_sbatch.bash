@@ -14,4 +14,4 @@
 module purge
 module add r-4.2.2-gcc-11.2.0
 
-make results/sample_aln/$1/.script_done
+make results/sampled_aln/$1/.script_done
