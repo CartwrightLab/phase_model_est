@@ -7,8 +7,14 @@ samples_file <- "results/params/ATGC001.samples.rds"
 sample_main <- function(samples_file, params_file) {
 
     dataset <- fs::path_file(samples_file) |> str_extract("^[^.]+(?=[.])")
-    withr::local_seed(20231101 + digest::digest2int(dataset),
+    withr::local_seed(digest::digest2int(str_glue("{dataset}-20231101"}),
         .rng_kind = "Mersenne-Twister")
+
+    # OLD, Bugged solution
+    #withr::local_seed(20231101 + digest::digest2int(dataset),
+    #    .rng_kind = "Mersenne-Twister")
+
+
 
     cli_progress_step("Reading alignment samples")
 
