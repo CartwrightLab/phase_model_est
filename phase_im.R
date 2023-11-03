@@ -479,7 +479,7 @@ codon_stats <- function(codons, wt = 1, nbins = 61*61) {
 }
 
 aln_stats <- function(aln, wt = 1) {
-    # trim out gaps longer than 12 nuceotides
+    # trim out gaps longer than 30 nuceotides
     raln <- rle( 1 + ((aln-1) %/% 3))
     mask <- (raln$values != 1) & (raln$length > 30)
     raln$values[mask] <- NA
