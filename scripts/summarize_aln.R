@@ -13,8 +13,9 @@ process_file <- function(path) {
     aa <- universal_genetic_code()
     gap_dat <- gap_stats(fasta[[1]], fasta[[2]], aa)
 
-    tab <- gap_dat |> count(phase, type) |>
-        complete(phase = 0:2, type = 1:2, fill = list(n = 0L))
+    tab <- gap_dat |> count(phase, type, length)
+
+    #complete(phase = 0:2, type = 1:2, fill = list(n = 0L))
 
     tab <- tab |> add_column(file = fs::path_file(path), .before = 1L)
 
