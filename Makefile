@@ -33,9 +33,18 @@ results/best_aln/%/.script_done: results/params/%.final.json results/params/%.sa
 	Rscript --vanilla phase_best_aln.R results/params/$*.samples.rds results/params/$*.final.json
 	touch $@
 
+results/sampled_aln/%/.script_done: results/params/%.final.json results/params/%.samples.rds
+	Rscript --vanilla phase_sample_aln.R results/params/$*.samples.rds results/params/$*.final.json
+	touch $@
+
 results/best_aln_sum/%.csv: results/best_aln/%/.script_done
 	(cd results/best_aln && Rscript --vanilla ../../scripts/summarize_aln.R $*) > $@
 
+results/sampled_aln_sum/%.csv: results/sampled_aln/%/.script_done
+	(cd results/sampled_aln && Rscript --vanilla ../../scripts/summarize_aln.R $*) > $@
+
 best_aln_sum: $(addprefix results/best_aln_sum/,$(addsuffix .csv,$(DATASETS)))
 
-.PHONY: best_aln_sum
+sampled_aln_sum: $(addprefix results/sampled_aln_sum/,$(addsuffix .csv,$(DATASETS)))
+
+.PHONY: best_aln_sum sampled_aln_sum
