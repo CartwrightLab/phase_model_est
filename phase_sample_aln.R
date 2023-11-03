@@ -7,7 +7,7 @@ samples_file <- "results/params/ATGC001.samples.rds"
 sample_main <- function(samples_file, params_file) {
 
     dataset <- fs::path_file(samples_file) |> str_extract("^[^.]+(?=[.])")
-    withr::local_seed(digest::digest2int(str_glue("{dataset}-20231101"}),
+    withr::local_seed(digest::digest2int(str_glue("{dataset}-20231101")),
         .rng_kind = "Mersenne-Twister")
 
     # OLD, Bugged solution
