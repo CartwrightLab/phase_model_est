@@ -37,6 +37,6 @@ summarize_dnds_main <- function(dir) {
 
 if(!rlang::is_interactive()) {
     args <- commandArgs(trailingOnly = TRUE)
-    dat <- summarize_aln_main(args[1])
+    dat <- summarize_dnds_main(args[1])
     cat(format_csv(dat))
 }
