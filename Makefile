@@ -43,8 +43,22 @@ results/best_aln_sum/%.csv: results/best_aln/%/.script_done
 results/sampled_aln_sum/%.csv: results/sampled_aln/%/.script_done
 	(cd results/sampled_aln && Rscript --vanilla ../../scripts/summarize_aln.R $*) > $@
 
+results/sampled_aln_dnds/%.csv: results/sampled_aln/%/.script_done
+	(cd results/sampled_aln && Rscript --vanilla ../../scripts/summarize_dnds.R $*) > $@
+
 best_aln_sum: $(addprefix results/best_aln_sum/,$(addsuffix .csv,$(DATASETS)))
 
 sampled_aln_sum: $(addprefix results/sampled_aln_sum/,$(addsuffix .csv,$(DATASETS)))
 
-.PHONY: best_aln_sum sampled_aln_sum
+sampled_aln_dnds: $(addprefix results/sampled_aln_dnds/,$(addsuffix .csv,$(DATASETS)))
+
+.PHONY: best_aln_sum sampled_aln_sum sampled_aln_dnds
+
+results/observed_indels.csv.gz: $(shell find results/sampled_aln_sum -type f -name '*.csv')
+	Rscript --vanilla scripts/make_obs_indels.R | gzip > $@
+
+results/observed_dnds.csv.gz: $(shell find results/sampled_aln_dnds -type f -name '*.csv')
+	Rscript --vanilla scripts/make_obs_dnds.R | gzip > $@
+
+results/obs_indels_summary.csv: results/observed_indels.csv.gz
+	Rscript --vanilla scripts/make_obs_indels_summary.R $< > $@
