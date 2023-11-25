@@ -13,9 +13,11 @@ read_fasta <- function(path) {
 process_file <- function(path) {
     fasta <- read_fasta(path)
 
+    n <- str_count(fasta$seq,"[ACGT]")
+
     tab <- seqinr::kaks(fasta, verbose = TRUE)
     tab <- as_tibble(tab)
-    tab <- add_column(tab, file = fs::path_file(path), .before = 1L)
+    tab <- add_column(tab, file = fs::path_file(path), length_1 = n[1], length_2 = n[2], .before = 1L)
 
     tab
 }
